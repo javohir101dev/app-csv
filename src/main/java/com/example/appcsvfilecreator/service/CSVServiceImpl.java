@@ -36,7 +36,11 @@ public class CSVServiceImpl implements CSVService{
         if (CSVHelper.isFormatMatches(multipartFile)) {
             try {
                 List<Record> recordsList = CSVHelper.toRecordList(multipartFile);
-                recordRepository.saveAll(recordsList);
+                for (Record record : recordsList) {
+                    recordRepository.save(record);
+                }
+
+//                recordRepository.saveAll(recordsList);
 
                 message = "Uploaded the file successfully: " + multipartFile.getOriginalFilename();
 
@@ -64,6 +68,7 @@ public class CSVServiceImpl implements CSVService{
      */
     @Override
     public InputStream load() {
+
         List<Record> recordsList = recordRepository.findAll();
 
         return CSVHelper.recordsToCSV(recordsList);

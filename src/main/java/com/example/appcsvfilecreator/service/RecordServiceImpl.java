@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RecordServiceImpl implements RecordService {
@@ -20,17 +19,17 @@ public class RecordServiceImpl implements RecordService {
     }
 
     /**
-     * Returns one Record by id
+     * Returns  Record by id
      * @param id
      * @return ResponseEntity<Record>
      */
     @Override
     public ResponseEntity<Record> get(String id) {
-        Optional<Record> optionalRecord = repository.findById(id);
-        return optionalRecord.map(
-                        record -> new ResponseEntity<>(record, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
-
+        Record optionalRecord = repository.findById(id);
+        if (optionalRecord!=null){
+            return new ResponseEntity<>(optionalRecord, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -62,10 +61,9 @@ public class RecordServiceImpl implements RecordService {
 //                    taking parent id
                     String parentId = id.substring(0, id.lastIndexOf("."));
 
-                    Optional<Record> optionalRecord = repository.findById(parentId);
-                    if (optionalRecord.isPresent()) {
 //                        Getting parent record
-                        Record recordParent = optionalRecord.get();
+                    Record  recordParent = repository.findById(parentId);
+                    if (recordParent!=null) {
                         if (!parentRecordList.contains(recordParent)) {
 //                            Checking if exists or not and adding Record to the parentList
                             parentRecordList.add(recordParent);
@@ -93,8 +91,10 @@ public class RecordServiceImpl implements RecordService {
 
             while (!childId.equals("")){
                 childId = getParentId(childId);
-                Optional<Record> optionalRecord = repository.findById(childId);
-                optionalRecord.ifPresent(parentRecordList::add);
+                Record optionalRecord = repository.findById(childId);
+                if (optionalRecord!=null){
+                    parentRecordList.add(optionalRecord);
+                }
             }
 
             return ResponseEntity.ok().body(parentRecordList);
@@ -164,14 +164,13 @@ public class RecordServiceImpl implements RecordService {
 //                Checking does have child or not
                 if (id.startsWith(parentId + ".")) {
 
-                    Optional<Record> optionalRecord = repository.findById(id);
+                    Record optionalRecord = repository.findById(id);
 
-                    if (optionalRecord.isPresent()) {
+                    if (optionalRecord!=null) {
 //                        Getting child record
-                        Record recordChild = optionalRecord.get();
-                        if (!childRecordList.contains(recordChild)) {
+                        if (!childRecordList.contains(optionalRecord)) {
 //                            Checking if exists or not and adding Record to the childList
-                            childRecordList.add(recordChild);
+                            childRecordList.add(optionalRecord);
                         }
 
                     }
