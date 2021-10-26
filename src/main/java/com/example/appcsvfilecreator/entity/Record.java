@@ -3,20 +3,16 @@ package com.example.appcsvfilecreator.entity;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 
-@Getter
-@Setter
-@NoArgsConstructor
+
+@Data
 @AllArgsConstructor
-@Entity()
+@NoArgsConstructor
 public class Record {
 
     /**
      * Record id (String)
      */
-    @Id
     private String id;
 
     /**

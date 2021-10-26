@@ -40,8 +40,6 @@ public class CSVServiceImpl implements CSVService{
                     recordRepository.save(record);
                 }
 
-//                recordRepository.saveAll(recordsList);
-
                 message = "Uploaded the file successfully: " + multipartFile.getOriginalFilename();
 
                 String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
